@@ -1,0 +1,10 @@
+language: node_js # specify your language
+node_js: # specify options for your language
+- '6.9'
+
+# whitelist
+branches:
+  only:
+    - master
+    - /^deploy-.*$/ # regex ok
+
