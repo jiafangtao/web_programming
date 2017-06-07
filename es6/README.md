@@ -1,5 +1,6 @@
 # es6
 
+![travis](https://api.travis-ci.org/jiafangtao/web_programming.svg?branch=master)
 
 **NOTE**: This folder contains not only ES6 (or others like ES7), but also some node.js code snippets drafted along I learn
 node.js.
