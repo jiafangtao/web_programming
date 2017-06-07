@@ -8,3 +8,12 @@ branches:
     - master
     - /^deploy-.*$/ # regex ok
 
+install:
+  - npm install -g mocha
+  - npm install
+  
+script:
+  - cd es6
+  - npm run babel
+  - npm test
+  
