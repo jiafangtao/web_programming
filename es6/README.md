@@ -24,7 +24,8 @@ node.js.
 
 ##### How to Play
 
-- Run "npm install" to set up
+- Run "npm install -g mocha" to install mocha globally. Thus you can run "mocha" from any directory.
+- Run "npm install" to set up all. It will install babel-cli, babel-core, babel-preset-es2015, and should.js.
 - Run "npm run babel" to compile ES6 code to be compatible with major JavaScript environments
 - Run "npm test" to execute tests
 
