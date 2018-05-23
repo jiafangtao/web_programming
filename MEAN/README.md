@@ -1,4 +1,4 @@
 ## Learning MEAN stack ##
 
-A blogger app written with MEAN (Mongodb, Express, Angular and node.js).
+A blogger app written with MEAN (Mongodb, Express, Angular and NodeJS).
 
