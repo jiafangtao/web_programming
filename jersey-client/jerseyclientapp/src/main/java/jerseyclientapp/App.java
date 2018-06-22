@@ -15,6 +15,10 @@ public class App {
 		log ("Posting with Header: Content-Length: 0 ......");
 		doPost("http://localhost:3000", null);
 		
+		log ("===============================");
+		
+		doPost("http://localhost:3000", "hello, world");
+		
 		log ("Done.");
 	}
 	
@@ -22,7 +26,9 @@ public class App {
 		
 		Response response = null;
     	
-		Client client = ClientBuilder.newBuilder().build();
+		//Client client = ClientBuilder.newBuilder().build();
+		Client client = ClientBuilder.newClient();
+		
         WebTarget webTarget = client.target(url).queryParam("responseFormat", "json");
         
         Invocation.Builder invocBuilder = webTarget.request(MediaType.APPLICATION_JSON_TYPE);
