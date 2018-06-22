@@ -5,6 +5,8 @@ var app = express();
 app.use(function (req, resp) {
     var content = '';
 
+    //console.log (req.headers);
+
     var ua = req.get('User-Agent');
     content += 'User-Agent: ' + ua;
 
