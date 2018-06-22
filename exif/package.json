@@ -1,0 +1,16 @@
+{
+  "name": "exif-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js -f data/test.jpg",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "exif": "^0.6.0",
+    "optimist": "^0.6.1"
+  }
+}
