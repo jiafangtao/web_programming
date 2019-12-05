@@ -5,9 +5,9 @@
  */
 package net.brucejia.learning.demo;
 
-import org.springframework.beans.annotation.Bean;
+import org.springframework.stereotype.Component;
 
-@Bean()
+@Component
 public class DogToy implements Toy {
 
     public void play(){

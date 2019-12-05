@@ -5,6 +5,9 @@
  */
 package net.brucejia.learning.demo;
 
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
 public class App {
 
     public static void main(String [] args){
