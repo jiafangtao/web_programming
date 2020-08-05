@@ -1,3 +1,5 @@
 es6/node_modules
 **/*.class
 
+**/node_modules/
+
