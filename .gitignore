@@ -7,3 +7,5 @@ es6/node_modules
 **/dist/
 
 spring-demo/lib
+spring-demo/out
+commons/target
