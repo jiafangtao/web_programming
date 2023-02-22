@@ -6,6 +6,8 @@ es6/node_modules
 **/cache/
 **/dist/
 
+**/.idea/
+
 spring-demo/lib
 spring-demo/out
 commons/target
