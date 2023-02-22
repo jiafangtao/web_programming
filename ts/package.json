@@ -1,0 +1,17 @@
+{
+  "name": "ts.sandbox",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "test": "test"
+  },
+  "keywords": [
+    "typescript"
+  ],
+  "author": "",
+  "license": "BSD-2-Clause",
+  "devDependencies": {
+    "typescript": "^4.9.5"
+  }
+}

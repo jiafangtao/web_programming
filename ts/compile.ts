@@ -1,0 +1,18 @@
+interface User {
+  name: string;
+  id: number;
+}
+
+const john: User = {
+  name: "John Doe",
+  id: 0,
+};
+
+function logUser(u: User) {
+  console.log("User with name " + u.name + " and id " + u.id);
+}
+
+
+function main() {
+  logUser(john);
+}
