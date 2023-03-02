@@ -1,8 +1,10 @@
-const list = function(dir) {
+const ls = function(dir) {
 	console.log("listing a remote dir");
 };
 
 var fs = {};
-fs.list = list;
+fs.list = ls;
 
 fs.list('foo');
+
+export { ls, fs };

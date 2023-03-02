@@ -8,6 +8,9 @@ es6/node_modules
 
 **/.idea/
 
+**/coverage/
+
+
 spring-demo/lib
 spring-demo/out
 commons/target
