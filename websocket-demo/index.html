@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket</title>
+</head>
+<body>
+    <h1>Echo Test</h1>
+    <input id="sendTxt" type="text" />
+    <button id="sendBtn">Send Message</button>
+    <div id="recv"></div>
+    <script type="text/javascript">
+        let websocket = new WebSocket("ws://127.0.0.1:3000/echo-protocol");
+        websocket.onopen = function () {
+ 
+            console.log('websocket open');
+            document.getElementById("recv").innerText = "Connected";
+        }
+ 
+        websocket.onclose = function () {
+ 
+            console.log('websocket close');
+        }
+ 
+        websocket.onmessage = function (ev) {
+ 
+            console.log(ev.data);
+            document.getElementById("recv").innerHTML = ev.data;
+        }
+ 
+        document.getElementById("sendBtn").onclick = function () {
+ 
+            let txt = document.getElementById("sendTxt").value;
+            //console.log(txt);
+            websocket.send(txt);
+        }
+ 
+    </script>
+</body>
+</html>

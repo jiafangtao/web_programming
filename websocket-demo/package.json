@@ -1,0 +1,17 @@
+{
+  "name": "websocket-demo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node wsServer.js",
+    "test": "node client.js"
+  },
+  "keywords": ["websocket"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "nodejs-websocket": "^1.7.2",
+    "websocket": "^1.0.34"
+  }
+}
