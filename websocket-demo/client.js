@@ -20,16 +20,24 @@ client.on('connect', function(connection) {
             console.log("Received: '" + message.utf8Data + "'");
         }
     });
-    
+
+    const max = 10;
+    var sentCount = 0;
     function sendNumber() {
         if (connection.connected) {
             var number = Math.round(Math.random() * 0xFFFFFF);
             connection.sendUTF(number.toString());
-            setTimeout(sendNumber, 1000);
+            
+	    sentCount++;
+	    if (sentCount < max) {
+	        // a loop for send numbers
+                setTimeout(sendNumber, 1000);
+	    }
         }
     }
     sendNumber();
 });
 
-client.connect('ws://localhost:3000/', 'echo-protocol');
+//client.connect('ws://localhost:3000/', 'echo-protocol');
+client.connect('ws://localhost:3000/');
 
