@@ -3,17 +3,27 @@
 const { io } = require("socket.io-client");
 
 const local = "http://127.0.0.1:3000";
-//const k8s = "http://127.0.0.1:54241/socket.io/";
 
-const k8s = "http://localhost";
+// Based on the tests both schemes (http and ws) work well.
+//const thismachine = "http://thismachine:3000"; // ok
+const thismachine = "ws://thismachine:3000"; // ok
 
-const sockserver = "http://net-socket"
+const sockserver = "http://net-socket";
+const devServer = "http://192.168.88.67";
 
-const socket = io(k8s, {
+const k8s = "http://127.0.0.1";
+
+//const server = thismachine;
+const server = k8s;
+
+
+console.log("Connecting websocket server at ", server);
+
+const socket = io(server, {
   transports: ['websocket', 'polling'],
   reconnection: true,
   upgrade: true,
-  timeout: 3000,
+  timeout: 10000,
   auth: {
     token: "123"
   },

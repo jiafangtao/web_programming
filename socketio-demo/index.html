@@ -24,7 +24,7 @@
   
     <script src="/socket.io/socket.io.js"></script>
     <script>
-      var socket = io("http://localhost:1080/socket.io/");
+      var socket = io();
 
       socket.on('error', (error) => { console.error(error) });
 
@@ -42,7 +42,9 @@
         document.getElementById('message').appendChild(item);
       });
 
-      socket.on('pm', (msg) => {});
+      socket.onAny((event, msg) => {
+        console.log("Unhandled message: evt=%s, msg=%s", event, message);
+      });
 
       var form = document.getElementById('form');
       var input = document.getElementById('input');
