@@ -13,23 +13,30 @@ func (s Status) String() string {
 	return statusMap[s]
 }
 
-/*
-func (s *Status) MarshalJSON() ([]byte, error) {
-	return [] byte("\"" + statusMap[*s] + "\""), nil
+func (s Status) MarshalJSON() ([]byte, error) {
+    temp := statusMap[s]
+    return json.Marshal(temp)
 }
 
 func (s *Status) UnmarshalJSON(b []byte) error {
 
-	tmp := string(b)
-	fmt.Printf("UnmarshalJSON 1... tmp=%s\n", tmp)
-	fmt.Printf("%i\n", statusReprMap[tmp])
-	*s = statusReprMap[tmp]
+    // init to Unknown
+    *s = Unknown
 
-	fmt.Printf("UnmarshalJSON 2... %d\n\n", *s)
+    var temp string 
+    err := json.Unmarshal(b, &temp)
+    if err != nil {
+        return err
+    }
+
+    for k, v := range statusMap {
+        if v == temp {
+            *s = k
+        }
+    }
 
 	return nil
 }
-*/
 
 const (
     Running Status = iota
@@ -53,23 +60,13 @@ var statusMap = map[Status]string{
 	Unknown:    "Unknown",
 }
 
-var statusReprMap = map[string]Status {
-	"Waiting":    Waiting,
-	"Running":    Running,
-	"Pending":    Pending,
-	"Killed":     Killed,
-	"Terminated": Terminated,
-	"Succeeded":  Succeeded,
-	"Failed":     Failed,
-	"Unknown":    Unknown,
-}
-
 // PSStatus defines status for process
 type Process struct {
 	PId       int64 `json:"pid"`
 	Status    Status `json:"status"`
 }
 
+/*
 func (p Process) MarshalJSON() ([]byte, error) {
 	type ProcessAlias Process
 
@@ -105,7 +102,7 @@ func (p *Process) UnmarshalJSON(b []byte) error {
 	p.Status = statusReprMap[pw.Status]
 	return nil
 }
-
+*/
 
 func (p Process) String() string {
 	return fmt.Sprintf("pid: %v, status: %v", p.PId, p.Status)
@@ -118,16 +115,11 @@ func main() {
         Status: Succeeded,
     }
 
-    fmt.Printf("1111111111111111 %v\n", p.Status);
-
-    //temp := []byte("testing")
-    //fmt.Printf("%s\n", temp)
-
     res, err := json.Marshal(p)
     if err != nil {
-        fmt.Printf("Marshal Error: %s\n", err)
+        fmt.Printf("Marshal Error: %v\n", err)
     } else {
-        fmt.Printf("%s\n", res)
+        fmt.Printf("Marshal Result: %s\n", res)
     }
 
     ps2 := Process{
@@ -138,7 +130,7 @@ func main() {
     if err != nil {
     	fmt.Printf("Unmarshal Error: ", err)
     } else {
-	    fmt.Printf("%v\n", ps2)
+        fmt.Printf("Unmarshal Result: %v\n", ps2)
     }
 
     ps3 := Process{}
