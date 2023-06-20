@@ -12,3 +12,6 @@ es6/node_modules
 spring-demo/lib
 spring-demo/out
 commons/target
+
+!vtkjs-demo/dist/index.html
+!vtkjs-demo/dist/demo.html
