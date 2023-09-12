@@ -1,0 +1,3 @@
+[submodule "fluid-demo/FluidHelloWorld"]
+	path = fluid-demo/FluidHelloWorld
+	url = https://github.com/microsoft/FluidHelloWorld.git
