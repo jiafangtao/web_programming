@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: demo-initcontainers-pod
+  labels:
+    app.kubernetes.io/name: demo-initcontainers-pod
+    date: '20231005'
+spec:
+  containers:
+  - name: busybox-container-1
+    image: busybox
+    command: ['sh', '-c', 'echo container-1 is running on ip $POD_IP name $POD_NAME && sleep 3600']
+    env:
+      - name: POD_IP
+        valueFrom:
+          fieldRef:
+            fieldPath: status.podIP
+      - name: POD_NAME
+        valueFrom:
+          fieldRef:
+            fieldPath: metadata.name
+  - name: busybox-container-2
+    image: busybox
+    command: ['sh', '-c', 'echo container-2 is running on ip $POD_IP name $POD_NAME && sleep 3600']
+    env:
+      - name: POD_IP
+        valueFrom:
+          fieldRef:
+            fieldPath: status.podIP
+      - name: POD_NAME
+        valueFrom:
+          fieldRef:
+            fieldPath: metadata.name
+  initContainers:
+  - name: init-delay
+    image: busybox
+    command: ['sh', '-c', 'echo sleep in init-delay on ip $POD_IP, name $POD_NAME ...;sleep 3;']
+    env:
+      - name: POD_IP
+        valueFrom:
+          fieldRef:
+            fieldPath: status.podIP
+      - name: POD_NAME
+        valueFrom:
+          fieldRef:
+            fieldPath: metadata.name
