@@ -12,5 +12,13 @@ public class App {
 
     public static void main(String [] args){
         // init the app
+        try {
+            for (int i = 0; i < 100; i++) {
+                Thread.sleep(1000);
+                System.out.println(".");
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
