@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "module": "CommonJS",
+        "target": "ESNext",
+        "noImplicitAny": false,
+        "declaration": false,
+        "outDir": "./img",
+        "types": [
+            "body-parser",
+            "express",
+            "formidable",
+            "fs-extra",
+            "pg",
+            "tar"
+        ]
+    }
+}
