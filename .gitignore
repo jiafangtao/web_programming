@@ -15,3 +15,5 @@ commons/target
 
 !vtkjs-demo/dist/index.html
 !vtkjs-demo/dist/demo.html
+
+pyside2-demo/env/
