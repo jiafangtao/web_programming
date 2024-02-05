@@ -19,6 +19,7 @@ const camera = new THREE.PerspectiveCamera(
 
 	camera.position.z = 1;
 
+
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
@@ -48,9 +49,11 @@ const loader = new GLTFLoader();
 if (FeatureToggle.showGltfModel) {
 	loader.load( 'static/models/BarramundiFish.glb', function ( gltf ) {
 
+
 		let model = gltf.scene;
 		// try
 		//model.scale.set(10, 10, 10);
+
 
 		console.info("The model was loaded successfully");
 		console.log(gltf.scene);
@@ -83,7 +86,7 @@ if (FeatureToggle.showGltfModel) {
 	} );	
 }
 
-const light = new THREE.AmbientLight( 0x404040 ); // soft white light
+const light = new THREE.AmbientLight( 0x808080 ); // soft white light
 scene.add( light );
 
 const hemLight = new THREE.HemisphereLight(0xffffff, 0xffffff);
@@ -111,3 +114,4 @@ function controlsBox(model, controls) {
 	controls.target.set(xPoiition, yPoiition, zPoiition);
 	controls.update();
 }
+
