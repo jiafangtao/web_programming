@@ -1,0 +1,13 @@
+[workspace]
+members = [
+    "adder",
+    "c13-1",
+    "c13-5",
+    "c13-8",
+    "c15",
+    "c18-11",
+    "hello_the_book",
+]
+
+resolver = "2"
+
