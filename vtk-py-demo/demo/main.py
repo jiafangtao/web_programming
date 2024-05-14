@@ -115,6 +115,5 @@ iren.Start()
 
 #
 # questions:
-#   1. how to show only wireframe?
 #   2. LOD?
 # 
