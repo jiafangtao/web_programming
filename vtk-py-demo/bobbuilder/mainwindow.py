@@ -229,8 +229,6 @@ if __name__ == "__main__":
     
     window = SimpleView(controller, model)
     window.show()
-    
     window.iren.Initialize()  # Need this line to actually show the render inside Qt
 
-    # engine starts.
     sys.exit(app.exec())
