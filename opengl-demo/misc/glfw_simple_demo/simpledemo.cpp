@@ -5,6 +5,8 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include "linmath.h"
+#include "common.h"
+
 
 //TODO: https://www.glfw.org/docs/latest/quick.html#quick_key_input
 
@@ -233,6 +235,8 @@ int main(int argc, char** argv)
         glUniformMatrix4fv(mvp_location, 1, GL_FALSE, (const GLfloat*)&mvp);
         //glBindVertexArray(vertex_array);
         glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        //TODO:        glDrawElements(GL_TRIANGLES, 3, type, indices);
 
         glfwSwapBuffers(window);
         glfwPollEvents();

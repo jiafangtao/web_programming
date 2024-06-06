@@ -15,10 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="displaylist.cpp">
+    <ClCompile Include="glad.c">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="glad.c">
+    <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -26,5 +26,16 @@
     <ClInclude Include="linmath.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="common.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="simpledemo.cpp">
+      <Filter>源文件</Filter>
+    </None>
+    <None Include="twotriangles.cpp">
+      <Filter>源文件</Filter>
+    </None>
   </ItemGroup>
 </Project>
