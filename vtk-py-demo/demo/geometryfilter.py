@@ -52,7 +52,8 @@ def save_pdata_to_file(path, pdata):
 
 
 def show_ui(uGrid):
-	filter = vtk.vtkDataSetSurfaceFilter()
+	#filter = vtk.vtkDataSetSurfaceFilter()
+	filter = vtk.vtkGeometryFilter()
 	filter.SetInputData(uGrid)
 	filter.Update()
 	pdata = filter.GetOutput()
