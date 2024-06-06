@@ -4,8 +4,10 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include <assert.h>
 #include "linmath.h"
 #include "common.h"
+
 
 static const Vertex vertices[10] =
 {
@@ -47,7 +49,7 @@ static const char* fragment_shader_text =
 
 static float g_pt_size = 1.0f;
 static GLint ptSize_location = 0;
-static bool g_flag_rotating = false;
+static bool g_flag_rotating = true;
 
 void error_callback(int error, const char* description)
 {
@@ -100,6 +102,36 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
     }
 }
 
+namespace util {
+    void bbox(const Vertex* vertices, unsigned int size, float* bb)
+    {
+        assert(vertices != nullptr);
+        assert(size > 0);
+
+        // z is not considered in this case.
+        float xmin, xmax, ymin, ymax;
+        xmin = xmax = vertices[0].pos[0];
+        ymin = ymax = vertices[0].pos[1];
+        
+        for (unsigned int i = 1; i < size; i++)
+        {
+            float x = vertices[i].pos[0];
+            float y = vertices[i].pos[1];
+
+            if (x < xmin) { xmin = x; }
+            if (y < ymin) { ymin = y; }
+            if (x > xmax) { xmax = x; }
+            if (y > ymax) { ymax = y; }
+        }
+
+        bb[0] = xmin;
+        bb[1] = ymin;
+        bb[2] = xmax;
+        bb[3] = ymax;
+    }
+}
+
+
 // GLFWframebuffersizefun
 void resize_callback(GLFWwindow* window, int width, int height)
 {
@@ -137,7 +169,7 @@ int main(int argc, char** argv)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(800, 600, "Demo - Triangles", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(640, 480, "Demo - Triangles", NULL, NULL);
     if (!window)
     {
         // Window or OpenGL context creation failed
@@ -195,6 +227,10 @@ int main(int argc, char** argv)
     glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE,
         sizeof(Vertex), (void*)offsetof(Vertex, col));
 
+    float bbox[4] = { 0.0f };
+    util::bbox(vertices, 6, bbox);
+    const float factor = max(abs(bbox[0] - bbox[2]), abs(bbox[1] - bbox[3]));
+
     while (!glfwWindowShouldClose(window))
     {
         int width, height;
@@ -208,9 +244,17 @@ int main(int argc, char** argv)
         mat4x4_identity(m);
         if (g_flag_rotating) {
             mat4x4_rotate_Z(m, m, (float)glfwGetTime());
+            //TODO: I don't know if rotate really change model matrix. should it?
         }
-        //mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
-        mat4x4_ortho(p, -ratio * 5, ratio * 5, -5.f, 5.f, 1.f, -1.f);
+        mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
+        
+        //NOTE: I believe this is not a good way to change the projection matrix.
+        // The problem that some shapes are cut off should be caused by the invalid model matrix
+        // which was initialized to identity matrix.
+        //mat4x4_ortho(p, -ratio * 5, ratio * 5, -5.f, 5.f, 1.f, -1.f);
+
+        // try to tweat the model matrix
+        mat4x4_scale_aniso(m, m, 1.0f / factor, 1.0f / factor, 1);
         
         mat4x4_mul(mvp, p, m);
 
