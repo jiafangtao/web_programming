@@ -52,7 +52,7 @@ def main():
 	data.GetCellData().SetScalars(cellColors)
 
 	if g_save_to_file:
-		save_polydata_to_file("triangle_out.vtp", data)
+		save_polydata_to_file("out/triangle_out.vtp", data)
 
 	if not g_show_ui:
 		print("Not going to show UI. Quit now.")

@@ -1,10 +1,6 @@
 import sys
 import vtk
 
-# flags to control whether show the results in canvas, whether save the scene to file, etc.
-g_show_ui = True
-g_save_to_file = True
-
 
 def main():
 	script_name = sys.argv[0]
@@ -41,52 +37,47 @@ def main():
 
 	data.SetCells(vtk.VTK_TETRA, ary)
 
-	if g_save_to_file:
-		save_data_to_file_1("out/tet_out.vtu", data)
-
-	if not g_show_ui:
-		print("Not going to show UI. Quit now.")
-		return
-
 	#filter = vtk.vtkGeometryFilter()
 	filter = vtk.vtkDataSetSurfaceFilter()
 	filter.SetInputData(data)
 	filter.Update()
-
-	#mapper = vtk.vtkPolyDataMapper()
-	#mapper.SetInputData(filter.GetOutputPort())
 
 	mapper = vtk.vtkDataSetMapper()
 	mapper.SetInputConnection(filter.GetOutputPort())
 
 	actor = vtk.vtkActor()
 	actor.GetProperty().SetColor(colors.GetColor3d('Yellow'))
-	actor.GetProperty().SetOpacity(0.60)
+	#actor.GetProperty().SetOpacity(0.50)
 	actor.SetMapper(mapper)
+	
+	plane = vtk.vtkPlane()
+	plane.SetOrigin(4, 0, 0)
+	plane.SetNormal(1, 0, 0)
+	cutter = vtk.vtkCutter()
+	cutter.SetCutFunction(plane)
+	cutter.SetInputData(actor.GetMapper().GetInput())
+	cutter.Update()
+ 
+	cutterMapper = vtk.vtkPolyDataMapper()
+	cutterMapper.SetInputConnection(cutter.GetOutputPort())
+	planeActor = vtk.vtkActor()
+	planeActor.GetProperty().SetColor(colors.GetColor3d("Red"))
+	planeActor.GetProperty().SetLineWidth(2)
+	planeActor.SetMapper(cutterMapper)
 
 	ren = vtk.vtkRenderer()
 	ren.SetBackground(colors.GetColor3d('DarkGreen'))
 	ren.AddActor(actor)
+	ren.AddActor(planeActor)
 
 	renderWin = vtk.vtkRenderWindow()
 	renderWin.AddRenderer(ren)
 	renderWin.SetSize(600, 450)
 
-	print(f"window name: {renderWin.GetWindowName()}")
-	renderWin.SetWindowName(f"Demo - {script_name} (vtk {ver})")
-
 	iren = vtk.vtkRenderWindowInteractor()
 	iren.SetRenderWindow(renderWin)
 	iren.Initialize()
 	iren.Start()
-
-
-def save_data_to_file_1(path, data):
-	writer = vtk.vtkUnstructuredGridWriter()
-	writer.SetFileName(path)
-	writer.SetInputData(data)
-	writer.Write()
-	print(f"#1. data is saved to file")
 
 
 if __name__ == '__main__':
