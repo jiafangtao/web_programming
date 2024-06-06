@@ -7,11 +7,19 @@
 #include "linmath.h"
 #include "common.h"
 
-static const Vertex vertices[3] =
+static const Vertex vertices[10] =
 {
     { { -0.6f, -0.4f }, { 1.f, 0.f, 0.f } },
     { {  0.6f, -0.4f }, { 0.f, 1.f, 0.f } },
-    { {   0.f,  0.6f }, { 0.f, 0.f, 1.f } }
+    { {   0.f,  0.6f }, { 0.f, 0.f, 1.f } },
+    { { 3-0.6f, 0.6f }, { 0.f, 0.f, 1.f } },
+    { {  3.6f, 0.6f }, { 0.f, 1.f, 0.f } },
+    { {  3.f,  -0.4f }, { 1.f, 0.f, 0.f } },
+
+    { {  0.f,  0.f }, { 1.f, 1.f, 0.f } },
+    { {  1.f,  0.f }, { 1.f, 1.f, 0.f } },
+    { {  1.f,  1.f }, { 1.f, 1.f, 0.f } },
+    { {  0.f,  1.f }, { 1.f, 1.f, 0.f } }
 };
 
 static const char* vertex_shader_text =
@@ -39,6 +47,7 @@ static const char* fragment_shader_text =
 
 static float g_pt_size = 1.0f;
 static GLint ptSize_location = 0;
+static bool g_flag_rotating = false;
 
 void error_callback(int error, const char* description)
 {
@@ -128,7 +137,7 @@ int main(int argc, char** argv)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(640, 480, "Demo - Triangles", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(800, 600, "Demo - Triangles", NULL, NULL);
     if (!window)
     {
         // Window or OpenGL context creation failed
@@ -197,17 +206,20 @@ int main(int argc, char** argv)
 
         mat4x4 m, p, mvp;
         mat4x4_identity(m);
-        //mat4x4_rotate_Z(m, m, (float)glfwGetTime());
-        mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
+        if (g_flag_rotating) {
+            mat4x4_rotate_Z(m, m, (float)glfwGetTime());
+        }
+        //mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
+        mat4x4_ortho(p, -ratio * 5, ratio * 5, -5.f, 5.f, 1.f, -1.f);
+        
         mat4x4_mul(mvp, p, m);
 
         glUseProgram(program);
         glUniformMatrix4fv(mvp_location, 1, GL_FALSE, (const GLfloat*)&mvp);
 
         // Now we are ready to shoot the GPU.
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-
-        glDrawArrays(GL_POINTS, 0, 3);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        glDrawArrays(GL_POINTS, 0, 6); // ignore the last 4 points which is for debug.
 
         glfwSwapBuffers(window);
         glfwPollEvents();
