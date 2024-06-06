@@ -42,7 +42,7 @@ def main():
 	data.SetPolys(ary)
 
 	if g_save_to_file:
-		save_polydata_to_file("polyline_out.vtk", data)
+		save_polydata_to_file("out/polyline_out.vtk", data)
 
 	if not g_show_ui:
 		print("Not going to show UI. Quit now.")

@@ -1,18 +1,10 @@
 import sys
 import vtk
 
-g_show_ui = False
-g_save_to_file = True
-
-
+colors = vtk.vtkNamedColors()
 
 def main():
-	script_name = sys.argv[0]
-	ver = vtk.vtkVersion().GetVTKVersionFull()
-
-	colors = vtk.vtkNamedColors()
-	
-	data = vtk.vtkUnstructuredGrid()
+	uGrid = vtk.vtkUnstructuredGrid()
 
 	points = vtk.vtkPoints()
 	id1 = points.InsertNextPoint(6, 6, 10)
@@ -20,9 +12,7 @@ def main():
 	id3 = points.InsertNextPoint(0, 8, 0)
 	id4 = points.InsertNextPoint(8, 0, 0)
 	id5 = points.InsertNextPoint(6, 6, -10)
-
-	data.SetPoints(points)
-
+	uGrid.SetPoints(points)
 	print("Ids of points are prepared")
 
 	tet = vtk.vtkTetra()
@@ -37,26 +27,42 @@ def main():
 	tet2.GetPointIds().SetId(2, id3)
 	tet2.GetPointIds().SetId(3, id4)
 
+	ca = vtk.vtkCellArray()
+	ca.InsertNextCell(tet)
+	ca.InsertNextCell(tet2)
 
-	ary = vtk.vtkCellArray()
-	ary.InsertNextCell(tet)
-	ary.InsertNextCell(tet2)
-
-	data.SetCells(vtk.VTK_TETRA, ary)
+	uGrid.SetCells(vtk.VTK_TETRA, ca)
+	save_ugrid_to_file("out/geomfilter_out.vtu", uGrid)
+ 
+	show_ui(uGrid)
 	
+def save_ugrid_to_file(path, data):
+	writer = vtk.vtkUnstructuredGridWriter()
+	writer.SetFileName(path)
+	writer.SetInputData(data)
+	writer.Write()
+	print(f"#1. data is saved to file")
 
-	if g_save_to_file:
-		save_data_to_file_1("out/tet_2_out.vtu", data)
+def save_pdata_to_file(path, pdata):
+	writer = vtk.vtkPolyDataWriter()
+	writer.SetFileName(path)
+	writer.SetInputDataObject(pdata)
 
-	if not g_show_ui:
-		print("Not going to show UI. Quit now.")
-		return
+	writer.Write()
 
-	mapper = vtk.vtkPolyDataMapper()
-	mapper.SetInputData(data)
+
+def show_ui(uGrid):
+	filter = vtk.vtkDataSetSurfaceFilter()
+	filter.SetInputData(uGrid)
+	filter.Update()
+	pdata = filter.GetOutput()
+	save_pdata_to_file("out/geomfilter_pdata.vtp", pdata) # I know this is ...
+
+	mapper = vtk.vtkDataSetMapper()
+	mapper.SetInputConnection(filter.GetOutputPort())
 
 	actor = vtk.vtkActor()
-	actor.GetProperty().SetColor(colors.GetColor3d('PeachPuff'))
+	actor.GetProperty().SetColor(colors.GetColor3d('Yellow'))
 	actor.SetMapper(mapper)
 
 	ren = vtk.vtkRenderer()
@@ -67,21 +73,10 @@ def main():
 	renderWin.AddRenderer(ren)
 	renderWin.SetSize(600, 450)
 
-	print(f"window name: {renderWin.GetWindowName()}")
-	renderWin.SetWindowName(f"Demo - {script_name} (vtk {ver})")
-
 	iren = vtk.vtkRenderWindowInteractor()
 	iren.SetRenderWindow(renderWin)
 	iren.Initialize()
 	iren.Start()
-
-
-def save_data_to_file_1(path, data):
-	writer = vtk.vtkUnstructuredGridWriter()
-	writer.SetFileName(path)
-	writer.SetInputData(data)
-	writer.Write()
-	print(f"#1. data is saved to file")
 
 
 if __name__ == '__main__':
