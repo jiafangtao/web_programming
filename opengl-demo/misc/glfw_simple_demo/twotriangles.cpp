@@ -8,7 +8,6 @@
 #include "linmath.h"
 #include "common.h"
 
-
 static const Vertex vertices[10] =
 {
     { { -0.6f, -0.4f }, { 1.f, 0.f, 0.f } },
@@ -28,12 +27,13 @@ static const char* vertex_shader_text =
 "#version 330\n"
 "uniform mat4 MVP;\n"
 "uniform float ptSize;\n"
+"uniform float zoomFactor;\n"
 "in vec3 vCol;\n"
 "in vec2 vPos;\n"
 "out vec3 color;\n"
 "void main()\n"
 "{\n"
-"    gl_Position = MVP * vec4(vPos, 0.0, 1.0);\n"
+"    gl_Position = vec4(zoomFactor, zoomFactor, 0.0, 1.0) * MVP * vec4(vPos, 0.0, 1.0);\n"
 "    gl_PointSize = ptSize;\n"
 "    color = vCol;\n"
 "}\n";
@@ -48,8 +48,13 @@ static const char* fragment_shader_text =
 "}\n";
 
 static float g_pt_size = 1.0f;
-static GLint ptSize_location = 0;
-static bool g_flag_rotating = true;
+static GLint ptSize_location = GL_INVALID_INDEX ;
+
+static float g_zoom_factor = 1.0f;
+static GLint zoomFactor_location = GL_INVALID_INDEX;
+
+// flags to control the behavior
+static bool g_flag_rotating = false;
 
 void error_callback(int error, const char* description)
 {
@@ -99,6 +104,18 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
             g_pt_size = 1.0f;
         }
         glUniform1f(ptSize_location, g_pt_size);
+    }
+    else if ((key == GLFW_KEY_7 || key == GLFW_KEY_F7) && action == GLFW_PRESS)
+    {
+        std::cout << "zoom in" << std::endl;
+        g_zoom_factor *= 2.0f;
+        glUniform1f(zoomFactor_location, g_zoom_factor);
+    }
+    else if ((key == GLFW_KEY_8 || key == GLFW_KEY_F8) && action == GLFW_PRESS)
+    {
+        std::cout << "zoom out" << std::endl;
+        g_zoom_factor /= 2.0f;
+        glUniform1f(zoomFactor_location, g_zoom_factor);
     }
 }
 
@@ -214,6 +231,7 @@ int main(int argc, char** argv)
     const GLint vcol_location = glGetAttribLocation(program, "vCol");
 
     ptSize_location = glGetUniformLocation(program, "ptSize");
+    zoomFactor_location = glGetUniformLocation(program, "zoomFactor");
 
     GLuint vertex_array;
     glGenVertexArrays(1, &vertex_array);
@@ -247,19 +265,18 @@ int main(int argc, char** argv)
             //TODO: I don't know if rotate really change model matrix. should it?
         }
         mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
-        
-        //NOTE: I believe this is not a good way to change the projection matrix.
-        // The problem that some shapes are cut off should be caused by the invalid model matrix
-        // which was initialized to identity matrix.
-        //mat4x4_ortho(p, -ratio * 5, ratio * 5, -5.f, 5.f, 1.f, -1.f);
-
-        // try to tweat the model matrix
         mat4x4_scale_aniso(m, m, 1.0f / factor, 1.0f / factor, 1);
         
         mat4x4_mul(mvp, p, m);
 
         glUseProgram(program);
         glUniformMatrix4fv(mvp_location, 1, GL_FALSE, (const GLfloat*)&mvp);
+
+        //NOTE: initialize these to shaders otherwise default values will be used, which
+        // may be not what we expected. And it seems this doesn't work if we do this before 
+        // call glUseProgram.
+        glUniform1f(ptSize_location, g_pt_size);
+        glUniform1f(zoomFactor_location, g_zoom_factor);
 
         // Now we are ready to shoot the GPU.
         glDrawArrays(GL_TRIANGLES, 0, 6);
