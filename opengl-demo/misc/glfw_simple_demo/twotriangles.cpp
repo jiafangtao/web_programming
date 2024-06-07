@@ -8,6 +8,8 @@
 #include "linmath.h"
 #include "common.h"
 
+using namespace std;
+
 static const Vertex vertices[10] =
 {
     { { -0.6f, -0.4f }, { 1.f, 0.f, 0.f } },
@@ -71,11 +73,11 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
     {
         const float cap_max = 20.0f;
         if (g_pt_size < cap_max) {
-            std::cout << "make point bigger" << std::endl;
+            cout << "make point bigger" << endl;
         }
         else
         {
-            std::cout << "point is big enough:" << g_pt_size << std::endl;
+            cout << "point is big enough:" << g_pt_size << endl;
         }
 
         g_pt_size += 1.0f;
@@ -91,11 +93,11 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
         const float cap_min = 1.0f;
         if (g_pt_size > cap_min)
         {
-            std::cout << "make point smaller" << std::endl;
+            cout << "make point smaller" << endl;
         }
         else
         {
-            std::cout << "point is small enough: " << g_pt_size << std::endl;
+            cout << "point is small enough: " << g_pt_size << endl;
         }
         
         g_pt_size -= 1.0f;
@@ -107,15 +109,30 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
     }
     else if ((key == GLFW_KEY_7 || key == GLFW_KEY_F7) && action == GLFW_PRESS)
     {
-        std::cout << "zoom in" << std::endl;
+        cout << "zoom in" << endl;
         g_zoom_factor *= 2.0f;
         glUniform1f(zoomFactor_location, g_zoom_factor);
     }
     else if ((key == GLFW_KEY_8 || key == GLFW_KEY_F8) && action == GLFW_PRESS)
     {
-        std::cout << "zoom out" << std::endl;
+        cout << "zoom out" << endl;
         g_zoom_factor /= 2.0f;
         glUniform1f(zoomFactor_location, g_zoom_factor);
+    }
+    else if (key == GLFW_KEY_A && action == GLFW_PRESS)
+    {
+        // key 'a' for animation
+        // animation 1 - change triangle #2 color
+        cout << "animating triangle #2 color" << endl;
+    }
+    else if (key == GLFW_KEY_D && action == GLFW_PRESS)
+    {
+        // key 'd' for debug
+        cout << "checking the viewport ..." << endl;
+        GLint viewport[4];
+        glGetIntegerv(GL_VIEWPORT, viewport);
+        cout << "  " << viewport[0] << ", " << viewport[1] << ", " << viewport[2] << ", " << viewport[3] << endl;
+
     }
 }
 
