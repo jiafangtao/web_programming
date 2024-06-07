@@ -10,26 +10,23 @@
 
 using namespace std;
 
-static const Vertex vertices[10] =
+static Vertex vertices[6] =
 {
     { { -0.6f, -0.4f }, { 1.f, 0.f, 0.f } },
     { {  0.6f, -0.4f }, { 0.f, 1.f, 0.f } },
     { {   0.f,  0.6f }, { 0.f, 0.f, 1.f } },
     { { 3-0.6f, 0.6f }, { 0.f, 0.f, 1.f } },
     { {  3.6f, 0.6f }, { 0.f, 1.f, 0.f } },
-    { {  3.f,  -0.4f }, { 1.f, 0.f, 0.f } },
-
-    { {  0.f,  0.f }, { 1.f, 1.f, 0.f } },
-    { {  1.f,  0.f }, { 1.f, 1.f, 0.f } },
-    { {  1.f,  1.f }, { 1.f, 1.f, 0.f } },
-    { {  0.f,  1.f }, { 1.f, 1.f, 0.f } }
+    { {  3.f,  -0.4f }, { 1.f, 0.f, 0.f } }
 };
 
 static const char* vertex_shader_text =
 "#version 330\n"
+"#pragma debug(on)\n"
 "uniform mat4 MVP;\n"
 "uniform float ptSize;\n"
 "uniform float zoomFactor;\n"
+"uniform float colorFactor;\n"
 "in vec3 vCol;\n"
 "in vec2 vPos;\n"
 "out vec3 color;\n"
@@ -37,7 +34,7 @@ static const char* vertex_shader_text =
 "{\n"
 "    gl_Position = vec4(zoomFactor, zoomFactor, 0.0, 1.0) * MVP * vec4(vPos, 0.0, 1.0);\n"
 "    gl_PointSize = ptSize;\n"
-"    color = vCol;\n"
+"    color = colorFactor * vCol;\n"
 "}\n";
 
 static const char* fragment_shader_text =
@@ -55,8 +52,12 @@ static GLint ptSize_location = GL_INVALID_INDEX ;
 static float g_zoom_factor = 1.0f;
 static GLint zoomFactor_location = GL_INVALID_INDEX;
 
+static float g_color_factor = 1.0f;
+static GLint colorFactor_location = GL_INVALID_INDEX;
+
 // flags to control the behavior
 static bool g_flag_rotating = false;
+static bool g_flag_animate_colors = true;
 
 void error_callback(int error, const char* description)
 {
@@ -109,13 +110,13 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
     }
     else if ((key == GLFW_KEY_7 || key == GLFW_KEY_F7) && action == GLFW_PRESS)
     {
-        cout << "zoom in" << endl;
+        cout << "Key F7 (or 7): zoom in" << endl;
         g_zoom_factor *= 2.0f;
         glUniform1f(zoomFactor_location, g_zoom_factor);
     }
     else if ((key == GLFW_KEY_8 || key == GLFW_KEY_F8) && action == GLFW_PRESS)
     {
-        cout << "zoom out" << endl;
+        cout << "Key F8 (or 8): zoom out" << endl;
         g_zoom_factor /= 2.0f;
         glUniform1f(zoomFactor_location, g_zoom_factor);
     }
@@ -123,12 +124,12 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
     {
         // key 'a' for animation
         // animation 1 - change triangle #2 color
-        cout << "animating triangle #2 color" << endl;
+        cout << "Key A: animating triangle #2 color" << endl;
     }
     else if (key == GLFW_KEY_D && action == GLFW_PRESS)
     {
         // key 'd' for debug
-        cout << "checking the viewport ..." << endl;
+        cout << "Key D: checking the viewport ..." << endl;
         GLint viewport[4];
         glGetIntegerv(GL_VIEWPORT, viewport);
         cout << "  " << viewport[0] << ", " << viewport[1] << ", " << viewport[2] << ", " << viewport[3] << endl;
@@ -164,7 +165,6 @@ namespace util {
         bb[3] = ymax;
     }
 }
-
 
 // GLFWframebuffersizefun
 void resize_callback(GLFWwindow* window, int width, int height)
@@ -249,6 +249,7 @@ int main(int argc, char** argv)
 
     ptSize_location = glGetUniformLocation(program, "ptSize");
     zoomFactor_location = glGetUniformLocation(program, "zoomFactor");
+    colorFactor_location = glGetUniformLocation(program, "colorFactor");
 
     GLuint vertex_array;
     glGenVertexArrays(1, &vertex_array);
@@ -278,9 +279,17 @@ int main(int argc, char** argv)
         mat4x4 m, p, mvp;
         mat4x4_identity(m);
         if (g_flag_rotating) {
+            //NOTE: I don't know if rotate really change model matrix. should it?
+            //
             mat4x4_rotate_Z(m, m, (float)glfwGetTime());
-            //TODO: I don't know if rotate really change model matrix. should it?
         }
+
+        if (g_flag_animate_colors) {
+            g_color_factor = abs((float)sin(glfwGetTime()));
+            // if in verbose mode ...
+            //cout << "color factor: " << g_color_factor << endl;
+        }
+
         mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
         mat4x4_scale_aniso(m, m, 1.0f / factor, 1.0f / factor, 1);
         
@@ -294,14 +303,21 @@ int main(int argc, char** argv)
         // call glUseProgram.
         glUniform1f(ptSize_location, g_pt_size);
         glUniform1f(zoomFactor_location, g_zoom_factor);
-
+        
         // Now we are ready to shoot the GPU.
-        glDrawArrays(GL_TRIANGLES, 0, 6);
-        glDrawArrays(GL_POINTS, 0, 6); // ignore the last 4 points which is for debug.
+        glDrawArrays(GL_POINTS, 0, 6);
+
+        // triangle #1 - keep original color
+        glUniform1f(colorFactor_location, 1);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        
+        // triangle #2 - animate the color
+        glUniform1f(colorFactor_location, g_color_factor);
+        glDrawArrays(GL_TRIANGLES, 3, 3);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
-    }
+    } //end of loop
     
     glfwDestroyWindow(window);
     return 0;
