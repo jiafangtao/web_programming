@@ -21,6 +21,15 @@
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="JProgram.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="JError.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="common.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="linmath.h">
@@ -29,9 +38,18 @@
     <ClInclude Include="common.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="JProgram.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="JCommon.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="JError.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="simpledemo.cpp">
+    <None Include="dldemo.cpp">
       <Filter>源文件</Filter>
     </None>
     <None Include="twotriangles.cpp">

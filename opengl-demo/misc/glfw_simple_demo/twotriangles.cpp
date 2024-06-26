@@ -8,7 +8,42 @@
 #include "linmath.h"
 #include "common.h"
 
+#include "JProgram.h"
+
 using namespace std;
+
+// a dummy namespace holds sandbox code.
+namespace dummy {
+
+
+struct Point {
+    float x;
+    float y;
+    float z;
+
+    Point(float vx, float vy, float vz) : x(vx), y(vy), z(vz) {}
+};
+
+using PointPtr = std::shared_ptr<Point>;
+
+void makePoint(PointPtr& pt) {
+    /*
+    pt = make_shared<Point>(1, 2, 3);
+    pt->x = 1;
+    pt->y = 2;
+    pt->z = 3;
+    */
+    
+    Point* pTemp = new Point(1, 2, 3);
+    pt.reset(pTemp);
+}
+
+void test() {
+    PointPtr pt;
+    makePoint(pt);
+}
+
+} //namespace dummy
 
 static Vertex vertices[6] =
 {
@@ -133,7 +168,6 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
         GLint viewport[4];
         glGetIntegerv(GL_VIEWPORT, viewport);
         cout << "  " << viewport[0] << ", " << viewport[1] << ", " << viewport[2] << ", " << viewport[3] << endl;
-
     }
 }
 
@@ -177,6 +211,10 @@ void resize_callback(GLFWwindow* window, int width, int height)
     glViewport(0, 0, width, height);
 }
 
+void drawBackground() {
+    // draw a background to verify front transparent objects
+}
+
 struct Initializer
 {
     Initializer() {
@@ -193,6 +231,12 @@ struct Initializer
     }
 };
 
+// forward declarations
+void showRenderMode();
+
+void showFeedbackBuffer(GLfloat* buffer, GLsizei cnt);
+
+
 int main(int argc, char** argv)
 {
     Initializer glfw;
@@ -202,6 +246,9 @@ int main(int argc, char** argv)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
+    
+    //NOTE: this requires OpenGL 4.3 or a debug extension. And this will heavily slow down the app.
+    //glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true); // enable debug for gl
 
     GLFWwindow* window = glfwCreateWindow(640, 480, "Demo - Triangles", NULL, NULL);
     if (!window)
@@ -210,10 +257,48 @@ int main(int argc, char** argv)
         return 2;
     }
 
+    //TODO: fill it soon ...
+    //JGeneralProgram background; 
+
+    /*
+    
+    
+    JGeneralProgram twoTriangles;
+    twoTriangles.setShader(ShaderType_Vertex, vertex_shader_text);
+    twoTriangles.setShader(ShaderType_Fragment, fragment_shader_text);
+    twoTriangles.link();
+    twoTriangles.use();
+
+    GLint program = twoTriangles.program();
+    */
+
     glfwSetKeyCallback(window, key_callback);
+
+    // Make the OpenGL context current. This is important and most be called after load GL (via glad or alternatives)
     glfwMakeContextCurrent(window);
 
-    gladLoadGL();
+    // Load all OpenGL functions using the glfw loader function
+    // If you use SDL you can use: https://wiki.libsdl.org/SDL_GL_GetProcAddress
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+        std::cout << "Failed to initialize OpenGL context" << std::endl;
+        return -1;
+    }
+
+    // Alternative use the builtin loader, e.g. if no other loader function is available
+    /*
+    if (!gladLoadGL()) {
+        std::cout << "Failed to initialize OpenGL context" << std::endl;
+        return -1;
+    }
+    */
+
+    // glad populates global constants after loading to indicate,
+    // if a certain extension/version is available.
+    printf("OpenGL %d.%d\n", GLVersion.major, GLVersion.minor);
+
+    if (GLAD_GL_VERSION_3_0) {
+        /* We support at least OpenGL version 3 */
+    }
 
     int width, height;
     glfwGetFramebufferSize(window, &width, &height);
@@ -242,6 +327,17 @@ int main(int argc, char** argv)
     glAttachShader(program, vertex_shader);
     glAttachShader(program, fragment_shader);
     glLinkProgram(program);
+
+    // A block to play with texture. (test purpose only)
+    {
+        GLuint textA;
+        glGenTextures(1, &textA);
+
+        glBindTexture(GL_TEXTURE_2D, textA);
+
+        // unbind texture from the unit.
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
 
     const GLint mvp_location = glGetUniformLocation(program, "MVP");
     const GLint vpos_location = glGetAttribLocation(program, "vPos");
@@ -303,17 +399,60 @@ int main(int argc, char** argv)
         // call glUseProgram.
         glUniform1f(ptSize_location, g_pt_size);
         glUniform1f(zoomFactor_location, g_zoom_factor);
+
+        //showRenderMode();
+
+        //NOTE: play with feedback mode
+
+        //GLsizei size = 6 * 3; // x,y,z for 6 vertex
+        GLsizei size = 512;
+        GLenum typ = GL_3D;
+        GLfloat* buffer = new GLfloat[size];
+        memset(buffer, 0, sizeof(buffer[0]) * size);
         
+
+        //sanity check - 
+        //  calling glFeedbackBuffer while the GL is in feedback mode, GL will raise an error. 
+        GLint renderMode = 0;
+        glGetIntegerv(GL_RENDER_MODE, &renderMode);
+
+        if (renderMode != GL_FEEDBACK) {
+            glFeedbackBuffer(size, typ, buffer);
+            checkError(__FILE__, __LINE__);
+
+            GLint cnt = glRenderMode(GL_FEEDBACK);
+            std::cout << "glRenderMode returns " << cnt << std::endl;
+
+            checkError(__FILE__, __LINE__);
+        }
+        
+        //showRenderMode();
+
         // Now we are ready to shoot the GPU.
         glDrawArrays(GL_POINTS, 0, 6);
+        checkError(__FILE__, __LINE__);
 
         // triangle #1 - keep original color
         glUniform1f(colorFactor_location, 1);
+        checkError(__FILE__, __LINE__);
+
         glDrawArrays(GL_TRIANGLES, 0, 3);
-        
+        checkError(__FILE__, __LINE__);
+
         // triangle #2 - animate the color
+        //glRenderMode(GL_RENDER);
+        checkError(__FILE__, __LINE__);
+
         glUniform1f(colorFactor_location, g_color_factor);
-        glDrawArrays(GL_TRIANGLES, 3, 3);
+        checkError(__FILE__, __LINE__);
+
+        //glDrawArrays(GL_TRIANGLES, 3, 3);
+        //checkError(__FILE__, __LINE__);
+
+        GLsizei cnt = glRenderMode(GL_FEEDBACK); // it returns count of entries
+        std::cout << "glRenderMode returns " << cnt << std::endl;
+
+        showFeedbackBuffer(buffer, cnt);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -321,4 +460,78 @@ int main(int argc, char** argv)
     
     glfwDestroyWindow(window);
     return 0;
+}
+
+void showRenderMode() {
+    GLint renderMode = 0;
+    glGetIntegerv(GL_RENDER_MODE, &renderMode);
+
+    std::cout << "current mode is ";
+    switch (renderMode)
+    {
+    case GL_RENDER:
+        std::cout << "GL_RENDER" << std::endl;
+        break;
+    case GL_SELECT:
+        std::cout << "GL_SELECT" << std::endl;
+        break;
+    case GL_FEEDBACK:
+        std::cout << "GL_FEEDBACK" << std::endl;
+        break;
+    default:
+        std::cout << "oops!" << std::endl;
+        break;
+    }
+}
+
+void showFeedbackBuffer(GLfloat* buffer, GLsizei cnt) {
+    GLsizei idx = 0;
+    while (idx < cnt) {
+        GLfloat token = buffer[idx];
+        if (token == GL_POINT_TOKEN) {
+            //
+            float x = buffer[idx + 1];
+            float y = buffer[idx + 2];
+            float z = buffer[idx + 3];
+            std::cout << "point(" << x << ", " << y << ", " << z << ")" << std::endl;
+
+            idx += /*token*/ 1 + /*x,y,z*/ 3;
+        }
+        else if (token == GL_LINE_TOKEN) {
+            std::cout << "GL_LINE_TOKEN" << std::endl;
+        }
+        else if (token == GL_LINE_RESET_TOKEN) {
+            std::cout << " GL_LINE_RESET_TOKEN" << std::endl;
+        }
+        else if (token == GL_POLYGON_TOKEN) {
+            std::cout << "polygon(";
+            float n = buffer[idx+1];
+            // process n vertex
+            for (int j = 0; j < n; j++) {
+                float x = buffer[idx + 2 + j * 3];
+                float y = buffer[idx + 2 + j * 3 + 1];
+                float z = buffer[idx + 2 + j * 3 + 2];
+
+                std::cout << x << ", " << y << ", " << z << "; ";
+            }
+            
+            std::cout << ")" << std::endl;
+            idx += /*token*/ 1 + /*size*/ 1 + /* n*(x,y,z) */ n * 3;
+        }
+        else if (token == GL_BITMAP_TOKEN) {
+            std::cout << "GL_BITMAP_TOKEN " << std::endl;
+        }
+        else if (token == GL_DRAW_PIXEL_TOKEN) {
+            std::cout << "GL_DRAW_PIXEL_TOKEN " << std::endl;
+        }
+        else if (token == GL_COPY_PIXEL_TOKEN) {
+            std::cout << "GL_COPY_PIXEL_TOKEN " << std::endl;
+        }
+        else if (token == GL_PASS_THROUGH_TOKEN) {
+            std::cout << "GL_PASS_THROUGH_TOKEN " << std::endl;
+        }
+        else {
+            std::cout << "unsupported token type yet" << std::endl;
+        }
+    }
 }
