@@ -6,4 +6,10 @@ enum ShaderType {
     ShaderType_Fragment,
 };
 
+struct Vert {
+    float x, y, z;
+
+    Vert(float _x, float _y, float _z) : x(_x), y(_y), z(_z) {}
+};
+
 #endif //JCOMMON_H_

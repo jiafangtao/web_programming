@@ -152,6 +152,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="common.cpp" />
+    <ClCompile Include="JDisplayList.cpp" />
     <ClCompile Include="JError.cpp" />
     <ClCompile Include="JProgram.cpp" />
     <ClCompile Include="main.cpp" />
@@ -162,8 +163,10 @@
   <ItemGroup>
     <ClInclude Include="common.h" />
     <ClInclude Include="JCommon.h" />
+    <ClInclude Include="JDisplayList.h" />
     <ClInclude Include="JError.h" />
     <ClInclude Include="JProgram.h" />
+    <ClInclude Include="JRenderObject.h" />
     <ClInclude Include="linmath.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -6,6 +6,8 @@
 #include <iostream>
 #include "linmath.h"
 #include "common.h"
+#include "JCommon.h"
+#include "JDisplayList.h"
 
 
 void error_callback(int error, const char* description)
@@ -77,11 +79,24 @@ int main(int argc, char** argv)
 
     glfwSetFramebufferSizeCallback(window, resize_callback);
 
-    GLuint dlLoop = glGenLists(1);
-    checkError(__FILE__, __LINE__);
-    std::cout << "display list for line loop: " << dlLoop << std::endl;
-    drawLineLoop(dlLoop);
+    std::vector<Vert> loopVerts;
+    loopVerts.push_back({ 0.0f, 0.0f, 0.0f });
+    loopVerts.push_back({ 1.0f, 0.0f, 0.0f });
+    loopVerts.push_back({ 0.0f, 1.0f, 0.0f });
 
+    std::vector<Vert> polygonVerts;
+    polygonVerts.push_back({ -1.0, 0.0, 0.0 });
+    polygonVerts.push_back({ 0.0, 0.0, 0.0 });
+    polygonVerts.push_back({ 0.0, 1.0, 0.0 });
+    polygonVerts.push_back({ -1.0, 1.0, 0.0 });
+
+    JDisplayList dl;
+    dl.create()
+      .begin()
+      .lineLoop(loopVerts)
+      .polygon(polygonVerts)
+      .end();
+    
     GLuint dlPolygon = glGenLists(1);
     checkError(__FILE__, __LINE__);
     std::cout << "display list for polygon: " << dlPolygon << std::endl;
@@ -109,14 +124,12 @@ int main(int argc, char** argv)
         float lineWidth = 1 + 10 * abs(sin(t));
         glLineWidth(lineWidth);
 
-        glCallList(dlLoop);
-        checkError(__FILE__, __LINE__);
+        dl.render();
 
-        glCallList(dlPolygon);
-        checkError(__FILE__, __LINE__);
-
+        /*
         glCallList(dlColorbar);
         checkError(__FILE__, __LINE__);
+        */
 
         glfwSwapBuffers(window);
         glfwPollEvents();

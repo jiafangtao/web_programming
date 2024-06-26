@@ -30,6 +30,9 @@
     <ClCompile Include="common.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="JDisplayList.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="linmath.h">
@@ -45,6 +48,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="JError.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="JRenderObject.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="JDisplayList.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
