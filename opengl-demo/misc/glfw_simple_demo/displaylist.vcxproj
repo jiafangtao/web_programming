@@ -87,7 +87,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;DISPLAYLIST_DEMO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;NO_DISPLAYLIST_DEMO;TWO_TRIANGLES_DEMO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>..\..\3rdparty\glfw\include;D:\work\github\web_programming\opengl-demo\misc\glfw_simple_demo\glad\include</AdditionalIncludeDirectories>
     </ClCompile>
@@ -152,6 +152,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="common.cpp" />
+    <ClCompile Include="cube.cpp" />
     <ClCompile Include="JDisplayList.cpp" />
     <ClCompile Include="JError.cpp" />
     <ClCompile Include="JProgram.cpp" />

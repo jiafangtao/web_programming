@@ -12,39 +12,6 @@
 
 using namespace std;
 
-// a dummy namespace holds sandbox code.
-namespace dummy {
-
-
-struct Point {
-    float x;
-    float y;
-    float z;
-
-    Point(float vx, float vy, float vz) : x(vx), y(vy), z(vz) {}
-};
-
-using PointPtr = std::shared_ptr<Point>;
-
-void makePoint(PointPtr& pt) {
-    /*
-    pt = make_shared<Point>(1, 2, 3);
-    pt->x = 1;
-    pt->y = 2;
-    pt->z = 3;
-    */
-    
-    Point* pTemp = new Point(1, 2, 3);
-    pt.reset(pTemp);
-}
-
-void test() {
-    PointPtr pt;
-    makePoint(pt);
-}
-
-} //namespace dummy
-
 static Vertex vertices[6] =
 {
     { { -0.6f, -0.4f }, { 1.f, 0.f, 0.f } },
@@ -215,22 +182,6 @@ void drawBackground() {
     // draw a background to verify front transparent objects
 }
 
-struct Initializer
-{
-    Initializer() {
-        if (!glfwInit())
-        {
-            // Initialization failed
-            throw "glftInit() failed";
-        }
-    }
-
-    ~Initializer()
-    {
-        glfwTerminate();
-    }
-};
-
 // forward declarations
 void showRenderMode();
 
@@ -363,6 +314,13 @@ int main(int argc, char** argv)
     util::bbox(vertices, 6, bbox);
     const float factor = max(abs(bbox[0] - bbox[2]), abs(bbox[1] - bbox[3]));
 
+    //NOTE: play with feedback mode
+    GLsizei size = 512;
+    GLenum typ = GL_3D;
+    GLfloat* buffer = new GLfloat[size];
+    memset(buffer, 0, sizeof(buffer[0]) * size);
+
+
     while (!glfwWindowShouldClose(window))
     {
         int width, height;
@@ -382,8 +340,6 @@ int main(int argc, char** argv)
 
         if (g_flag_animate_colors) {
             g_color_factor = abs((float)sin(glfwGetTime()));
-            // if in verbose mode ...
-            //cout << "color factor: " << g_color_factor << endl;
         }
 
         mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
@@ -400,34 +356,25 @@ int main(int argc, char** argv)
         glUniform1f(ptSize_location, g_pt_size);
         glUniform1f(zoomFactor_location, g_zoom_factor);
 
-        //showRenderMode();
 
-        //NOTE: play with feedback mode
+        // this section is for feedback mode
+        if (0) {
+            //sanity check - 
+            //  calling glFeedbackBuffer while the GL is in feedback mode, GL will raise an error. 
+            GLint renderMode = 0;
+            glGetIntegerv(GL_RENDER_MODE, &renderMode);
 
-        //GLsizei size = 6 * 3; // x,y,z for 6 vertex
-        GLsizei size = 512;
-        GLenum typ = GL_3D;
-        GLfloat* buffer = new GLfloat[size];
-        memset(buffer, 0, sizeof(buffer[0]) * size);
-        
+            if (renderMode != GL_FEEDBACK) {
+                glFeedbackBuffer(size, typ, buffer);
+                checkError(__FILE__, __LINE__);
 
-        //sanity check - 
-        //  calling glFeedbackBuffer while the GL is in feedback mode, GL will raise an error. 
-        GLint renderMode = 0;
-        glGetIntegerv(GL_RENDER_MODE, &renderMode);
+                GLint cnt = glRenderMode(GL_FEEDBACK);
+                std::cout << "glRenderMode returns " << cnt << std::endl;
 
-        if (renderMode != GL_FEEDBACK) {
-            glFeedbackBuffer(size, typ, buffer);
-            checkError(__FILE__, __LINE__);
-
-            GLint cnt = glRenderMode(GL_FEEDBACK);
-            std::cout << "glRenderMode returns " << cnt << std::endl;
-
-            checkError(__FILE__, __LINE__);
+                checkError(__FILE__, __LINE__);
+            }
         }
         
-        //showRenderMode();
-
         // Now we are ready to shoot the GPU.
         glDrawArrays(GL_POINTS, 0, 6);
         checkError(__FILE__, __LINE__);
@@ -436,8 +383,8 @@ int main(int argc, char** argv)
         glUniform1f(colorFactor_location, 1);
         checkError(__FILE__, __LINE__);
 
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-        checkError(__FILE__, __LINE__);
+        //glDrawArrays(GL_TRIANGLES, 0, 3);
+        //checkError(__FILE__, __LINE__);
 
         // triangle #2 - animate the color
         //glRenderMode(GL_RENDER);
@@ -446,8 +393,8 @@ int main(int argc, char** argv)
         glUniform1f(colorFactor_location, g_color_factor);
         checkError(__FILE__, __LINE__);
 
-        //glDrawArrays(GL_TRIANGLES, 3, 3);
-        //checkError(__FILE__, __LINE__);
+        glDrawArrays(GL_TRIANGLES, 3, 3);
+        checkError(__FILE__, __LINE__);
 
         GLsizei cnt = glRenderMode(GL_FEEDBACK); // it returns count of entries
         std::cout << "glRenderMode returns " << cnt << std::endl;
@@ -499,6 +446,17 @@ void showFeedbackBuffer(GLfloat* buffer, GLsizei cnt) {
         }
         else if (token == GL_LINE_TOKEN) {
             std::cout << "GL_LINE_TOKEN" << std::endl;
+            // how many points are in the line?
+            int nPoints = (int)buffer[idx + 1];
+            for (int i = 0; i < nPoints; i++) {
+                float x = buffer[idx + 2 + i*3];
+                float y = buffer[idx + 3 + i * 3];
+                float z = buffer[idx + 4 + i * 3];
+
+                std::cout << "point(" << x << ", " << y << ", " << z << ")" << std::endl;
+            }
+
+            idx += /*token*/ 1 + /*line length*/ 1 + 3 * nPoints;
         }
         else if (token == GL_LINE_RESET_TOKEN) {
             std::cout << " GL_LINE_RESET_TOKEN" << std::endl;
@@ -532,6 +490,7 @@ void showFeedbackBuffer(GLfloat* buffer, GLsizei cnt) {
         }
         else {
             std::cout << "unsupported token type yet" << std::endl;
+            idx += 1;
         }
     }
 }
