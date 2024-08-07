@@ -33,7 +33,25 @@
     <ClCompile Include="JDisplayList.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="cube.cpp">
+    <ClCompile Include="cubedemo.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="JScene.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="JPoints.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="JCube.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="JLines.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="JConfiguration.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="JTriangle.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -59,12 +77,36 @@
     <ClInclude Include="JDisplayList.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="utils.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="JScene.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="JCube.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="JPoints.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="JLines.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="JConfiguration.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="JTriangle.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="dldemo.cpp">
       <Filter>源文件</Filter>
     </None>
     <None Include="twotriangles.cpp">
+      <Filter>源文件</Filter>
+    </None>
+    <None Include="singletriangle.cpp">
       <Filter>源文件</Filter>
     </None>
   </ItemGroup>

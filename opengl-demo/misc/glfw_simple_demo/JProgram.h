@@ -1,11 +1,10 @@
 #ifndef JPROGRAM_H_
 #define JPROGRAM_H_
 
-
-#include "JCommon.h"
-#include <string>
 #include <map>
+#include <string>
 #include <glad/glad.h>
+#include "JCommon.h"
 
 using namespace std;
 

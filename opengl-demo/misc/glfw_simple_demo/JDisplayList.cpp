@@ -44,16 +44,16 @@ JDisplayList& JDisplayList::end() {
     return *this;
 }
 
-JDisplayList& JDisplayList::lineLoop(const std::vector<Vert> & verts) {
+JDisplayList& JDisplayList::lineLoop(const std::vector<Vertex> & verts) {
     glBegin(GL_LINE_LOOP);
-    std::for_each(verts.begin(), verts.end(), [](const Vert& v) { glVertex3f(v.x, v.y, v.z); });
+    std::for_each(verts.begin(), verts.end(), [](const Vertex& v) { glVertex3f(v.x, v.y, v.z); });
     glEnd();
     return *this;
 }
 
-JDisplayList& JDisplayList::polygon(const std::vector<Vert>& verts) {
+JDisplayList& JDisplayList::polygon(const std::vector<Vertex>& verts) {
     glBegin(GL_POLYGON);
-    std::for_each(verts.begin(), verts.end(), [](const Vert& v) { glVertex3f(v.x, v.y, v.z); });
+    std::for_each(verts.begin(), verts.end(), [](const Vertex& v) { glVertex3f(v.x, v.y, v.z); });
     glEnd();
     return *this;
 }

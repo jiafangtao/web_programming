@@ -87,7 +87,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;NO_DISPLAYLIST_DEMO;TWO_TRIANGLES_DEMO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;NO_DISPLAYLIST_DEMO;NO_TWO_TRIANGLES_DEMO;SINGLE_TRIANGLE_DEMO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>..\..\3rdparty\glfw\include;D:\work\github\web_programming\opengl-demo\misc\glfw_simple_demo\glad\include</AdditionalIncludeDirectories>
     </ClCompile>
@@ -152,11 +152,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="common.cpp" />
-    <ClCompile Include="cube.cpp" />
+    <ClCompile Include="cubedemo.cpp" />
+    <ClCompile Include="JConfiguration.cpp" />
+    <ClCompile Include="JCube.cpp" />
     <ClCompile Include="JDisplayList.cpp" />
     <ClCompile Include="JError.cpp" />
+    <ClCompile Include="JLines.cpp" />
+    <ClCompile Include="JPoints.cpp" />
     <ClCompile Include="JProgram.cpp" />
+    <ClCompile Include="JScene.cpp" />
+    <ClCompile Include="JTriangle.cpp" />
     <ClCompile Include="main.cpp" />
+    <None Include="singletriangle.cpp" />
     <None Include="dldemo.cpp" />
     <ClCompile Include="glad.c" />
     <None Include="twotriangles.cpp" />
@@ -164,11 +171,18 @@
   <ItemGroup>
     <ClInclude Include="common.h" />
     <ClInclude Include="JCommon.h" />
+    <ClInclude Include="JConfiguration.h" />
+    <ClInclude Include="JCube.h" />
     <ClInclude Include="JDisplayList.h" />
     <ClInclude Include="JError.h" />
+    <ClInclude Include="JLines.h" />
+    <ClInclude Include="JPoints.h" />
     <ClInclude Include="JProgram.h" />
     <ClInclude Include="JRenderObject.h" />
+    <ClInclude Include="JScene.h" />
+    <ClInclude Include="JTriangle.h" />
     <ClInclude Include="linmath.h" />
+    <ClInclude Include="utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

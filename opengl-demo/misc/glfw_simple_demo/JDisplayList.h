@@ -20,8 +20,8 @@ public:
     virtual void render();
     virtual JDisplayList& begin();
     virtual JDisplayList& end();
-    virtual JDisplayList& lineLoop(const std::vector<Vert>& verts);
-    virtual JDisplayList& polygon(const std::vector<Vert>& verts);
+    virtual JDisplayList& lineLoop(const std::vector<Vertex>& verts);
+    virtual JDisplayList& polygon(const std::vector<Vertex>& verts);
 
 private:
     GLuint m_dl;

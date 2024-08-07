@@ -7,8 +7,8 @@
 #include <assert.h>
 #include "linmath.h"
 #include "common.h"
-
 #include "JProgram.h"
+#include "utils.h"
 
 using namespace std;
 
@@ -60,11 +60,6 @@ static GLint colorFactor_location = GL_INVALID_INDEX;
 // flags to control the behavior
 static bool g_flag_rotating = false;
 static bool g_flag_animate_colors = true;
-
-void error_callback(int error, const char* description)
-{
-    fprintf(stderr, "Error: %s\n", description);
-}
 
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -138,35 +133,6 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
     }
 }
 
-namespace util {
-    void bbox(const Vertex* vertices, unsigned int size, float* bb)
-    {
-        assert(vertices != nullptr);
-        assert(size > 0);
-
-        // z is not considered in this case.
-        float xmin, xmax, ymin, ymax;
-        xmin = xmax = vertices[0].pos[0];
-        ymin = ymax = vertices[0].pos[1];
-        
-        for (unsigned int i = 1; i < size; i++)
-        {
-            float x = vertices[i].pos[0];
-            float y = vertices[i].pos[1];
-
-            if (x < xmin) { xmin = x; }
-            if (y < ymin) { ymin = y; }
-            if (x > xmax) { xmax = x; }
-            if (y > ymax) { ymax = y; }
-        }
-
-        bb[0] = xmin;
-        bb[1] = ymin;
-        bb[2] = xmax;
-        bb[3] = ymax;
-    }
-}
-
 // GLFWframebuffersizefun
 void resize_callback(GLFWwindow* window, int width, int height)
 {
@@ -176,10 +142,6 @@ void resize_callback(GLFWwindow* window, int width, int height)
         return;
 
     glViewport(0, 0, width, height);
-}
-
-void drawBackground() {
-    // draw a background to verify front transparent objects
 }
 
 // forward declarations
