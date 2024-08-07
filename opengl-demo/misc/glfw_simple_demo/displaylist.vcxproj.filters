@@ -21,6 +21,39 @@
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="JProgram.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="JError.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="common.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="JDisplayList.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="cubedemo.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="JScene.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="JPoints.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="JCube.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="JLines.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="JConfiguration.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="JTriangle.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="linmath.h">
@@ -29,12 +62,51 @@
     <ClInclude Include="common.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="JProgram.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="JCommon.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="JError.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="JRenderObject.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="JDisplayList.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="utils.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="JScene.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="JCube.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="JPoints.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="JLines.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="JConfiguration.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="JTriangle.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="simpledemo.cpp">
+    <None Include="dldemo.cpp">
       <Filter>源文件</Filter>
     </None>
     <None Include="twotriangles.cpp">
+      <Filter>源文件</Filter>
+    </None>
+    <None Include="singletriangle.cpp">
       <Filter>源文件</Filter>
     </None>
   </ItemGroup>
