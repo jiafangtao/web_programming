@@ -17,3 +17,5 @@ commons/target
 !vtkjs-demo/dist/demo.html
 
 pyside2-demo/env/
+
+cpp/learncppagain/.vs/
