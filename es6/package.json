@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "mocha calculator.test.js",
     "babel": "babel --presets es2015 calculator.js -o build/main.bundle.js"
