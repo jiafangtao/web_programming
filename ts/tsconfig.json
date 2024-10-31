@@ -2,9 +2,11 @@
     "compilerOptions": {
         "module": "CommonJS",
         "target": "ESNext",
+        "noEmitOnError": true,
         "noImplicitAny": false,
         "declaration": false,
-        "outDir": "./img",
+        "outDir": "tmp",
+        "allowJs": false,
         "types": [
             "body-parser",
             "express",
