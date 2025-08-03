@@ -1,0 +1,209 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: photo-controller-system
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: photo-controller
+  namespace: photo-controller-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: photo-controller-role
+rules:
+- apiGroups:
+  - sce.trainings.com
+  resources:
+  - photos
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - sce.trainings.com
+  resources:
+  - photos/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - sce.trainings.com
+  resources:
+  - photos/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - coordination.k8s.io
+  resources:
+  - leases
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: photo-controller-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: photo-controller-role
+subjects:
+- kind: ServiceAccount
+  name: photo-controller
+  namespace: photo-controller-system
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: photo-storage-pvc
+  namespace: photo-controller-system
+  labels:
+    app: photo-controller
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  #storageClassName: csi-hostpath-sc
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: photo-controller
+  namespace: photo-controller-system
+  labels:
+    app: photo-controller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: photo-controller
+  template:
+    metadata:
+      labels:
+        app: photo-controller
+    spec:
+      serviceAccountName: photo-controller
+      containers:
+      - name: manager
+        image: photo-controller:latest
+        imagePullPolicy: IfNotPresent
+        command:
+        - /manager
+        args:
+        - --leader-elect
+        env:
+        - name: WATCH_NAMESPACE
+          value: ""
+        volumeMounts:
+        - name: photo-storage
+          mountPath: /photo_folder
+        resources:
+          limits:
+            cpu: 500m
+            memory: 128Mi
+          requests:
+            cpu: 10m
+            memory: 64Mi
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8081
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 8081
+          initialDelaySeconds: 5
+          periodSeconds: 10
+      - name: nginx-sidecar
+        image: nginx:1.27
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+          name: http
+        volumeMounts:
+        - name: photo-storage
+          mountPath: /usr/share/nginx/html/photos
+          readOnly: true
+        resources:
+          limits:
+            cpu: 200m
+            memory: 64Mi
+          requests:
+            cpu: 50m
+            memory: 32Mi
+      securityContext:
+        runAsUser: 0
+        runAsGroup: 0
+        fsGroup: 0
+      volumes:
+      - name: photo-storage
+        persistentVolumeClaim:
+          claimName: photo-storage-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: photo-controller-metrics-service
+  namespace: photo-controller-system
+  labels:
+    app: photo-controller
+spec:
+  ports:
+  - name: https
+    port: 8443
+    targetPort: 8443
+  - name: metrics
+    port: 8080
+    targetPort: 8080
+  - name: http
+    port: 80
+    targetPort: 80
+  selector:
+    app: photo-controller
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: photo-controller-ingress
+  namespace: photo-controller-system
+  labels:
+    app: photo-controller
+  annotations:
+    #nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  ingressClassName: nginx
+  rules:
+  - http:
+      paths:
+      - path: /photos/(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: photo-controller-metrics-service
+            port:
+              number: 80

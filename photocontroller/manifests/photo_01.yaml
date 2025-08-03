@@ -1,0 +1,9 @@
+apiVersion: sce.trainings.com/v1
+kind: Photo
+metadata:
+  name: photo-01
+spec:
+  name: Young Exoplanet
+  description: Young Exoplanet (Artist's Concept)
+  url: "https://images-assets.nasa.gov/image/PIA26601/PIA26601~medium.jpg"
+  score: 100

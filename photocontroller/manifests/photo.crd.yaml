@@ -1,0 +1,41 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: photos.sce.trainings.com
+spec:
+  group: sce.trainings.com
+  scope: Namespaced
+  names:
+    kind: Photo
+    listKind: PhotoList
+    plural: photos
+    singular: photo
+  versions:
+  - name: v1
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              name:
+                type: string
+              description:
+                type: string
+              url:
+                type: string
+              score:
+                type: integer
+    additionalPrinterColumns:
+    - jsonPath: .spec.name
+      name: Name
+      type: string
+    - jsonPath: .spec.description
+      name: Description
+      type: string
+    selectableFields:
+    - jsonPath: .spec.name
+    - jsonPath: .spec.score
