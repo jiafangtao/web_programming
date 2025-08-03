@@ -29,12 +29,31 @@ spec:
                 type: string
               score:
                 type: integer
+          status:
+            type: object
+            properties:
+              lastUpdated:
+                type: string
+                format: date-time
+              processingStatus:
+                type: string
+              message:
+                type: string
     additionalPrinterColumns:
     - jsonPath: .spec.name
       name: Name
       type: string
     - jsonPath: .spec.description
       name: Description
+      type: string
+    - jsonPath: .spec.url
+      name: URL
+      type: string
+    - jsonPath: .spec.score
+      name: Score
+      type: integer
+    - jsonPath: .status.processingStatus
+      name: Status
       type: string
     selectableFields:
     - jsonPath: .spec.name

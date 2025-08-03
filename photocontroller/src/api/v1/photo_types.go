@@ -67,6 +67,7 @@ func (in *PhotoStatus) DeepCopy() *PhotoStatus {
 //+kubebuilder:subresource:status
 //+kubebuilder:printcolumn:name="Name",type=string,JSONPath=`.spec.name`
 //+kubebuilder:printcolumn:name="Description",type=string,JSONPath=`.spec.description`
+//+kubebuilder:printcolumn:name="URL",type=string,JSONPath=`.spec.url`
 //+kubebuilder:printcolumn:name="Score",type=integer,JSONPath=`.spec.score`
 //+kubebuilder:printcolumn:name="Status",type=string,JSONPath=`.status.processingStatus`
 
