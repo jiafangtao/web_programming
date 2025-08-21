@@ -1,0 +1,9 @@
+apiVersion: sce.trainings.com/v1
+kind: Photo
+metadata:
+  name: photo-02
+spec:
+  name: Heard Volcano
+  description: Heard Volcano, Australia
+  url: "https://images-assets.nasa.gov/image/PIA26509/PIA26509~medium.jpg"
+  score: 85

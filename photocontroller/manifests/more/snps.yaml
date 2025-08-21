@@ -1,0 +1,10 @@
+apiVersion: sce.trainings.com/v1
+kind: Photo
+metadata:
+  name: snps
+  namespace: default
+spec:
+  name: "SNPS"
+  description: "Synopsys company logo"
+  url: "https://www.synopsys.com/content/experience-fragments/synopsys/en-us/global/eda/topnav/master/_jcr_content/root/topnav_copy.coreimg.svg/1706807034006/synopsys-logo-color.svg"
+  score: 100
